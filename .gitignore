@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+.DS_Store
+eda_outputs/
+dashboard_outputs/
+*.ipynb_checkpoints/
+*.log
