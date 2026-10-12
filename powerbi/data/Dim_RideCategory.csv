@@ -1,0 +1,4 @@
+category_key,category_name,min_minutes,max_minutes,persona_fit
+1,Short Trip (<15 min),1,15,Last-Mile Transit / Quick Errand
+2,Medium Trip (15-60 min),15,60,Primary Commute / Recreational Route
+3,Long / Day Trip (>60 min),60,1440,Lakefront Touring / Heavy Leisure

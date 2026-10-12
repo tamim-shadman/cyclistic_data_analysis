@@ -1,0 +1,21 @@
+station_id,station_name,latitude,longitude,community_area,station_tier,casual_bias_ratio
+101,"Streeter Dr & Grand Ave",41.892278,-87.612043,"Streeterville / Navy Pier","Tier 1 Lakefront Leisure",0.82
+102,"DuSable Lake Shore Dr & Monroe St",41.880958,-87.616743,"Loop / Millennium Park","Tier 1 Lakefront Leisure",0.78
+103,"Michigan Ave & Oak St",41.90096,-87.623777,"Gold Coast / Beach","Tier 1 Lakefront Leisure",0.72
+104,"Millennium Park",41.881032,-87.624084,"Loop","Tier 1 Tourist Center",0.75
+105,"Theater on the Lake",41.926277,-87.630831,"Lincoln Park Lakefront","Tier 1 Lakefront Leisure",0.76
+106,"Shedd Aquarium",41.867226,-87.615355,"Museum Campus","Tier 1 Tourist Center",0.79
+201,"Clinton St & Washington Blvd",41.88338,-87.64117,"West Loop / Ogilvie Station","Tier 1 Commuter Hub",0.14
+202,"Clinton St & Madison St",41.882242,-87.641066,"West Loop / Union Station","Tier 1 Commuter Hub",0.16
+203,"Canal St & Adams St",41.879255,-87.639904,"West Loop / Union Station","Tier 1 Commuter Hub",0.18
+204,"Kingsbury St & Kinzie St",41.889177,-87.638506,"Fulton River District","Tier 1 Commuter Hub",0.22
+205,"Clark St & Elm St",41.902973,-87.63128,"Near North Side","Tier 2 Mixed Commuter/Res",0.32
+206,"Wells St & Concord Ln",41.912133,-87.634656,"Old Town","Tier 2 Residential Corridor",0.34
+207,"Dearborn St & Adams St",41.879356,-87.629791,"Financial District / Loop","Tier 1 Commuter Hub",0.21
+208,"Franklin St & Monroe St",41.880317,-87.635185,"Loop Business Core","Tier 1 Commuter Hub",0.19
+209,"Broadway & Barry Ave",41.937725,-87.644095,"Lakeview","Tier 2 Mixed Urban",0.38
+210,"Wilton Ave & Belmont Ave",41.94018,-87.65303,"Lakeview / CTA Hub","Tier 2 Transit Transfer",0.28
+301,"State St & 33rd St",41.834734,-87.625827,"Bronzeville / IIT","Tier 3 University / South",0.35
+302,"University Ave & 57th St",41.791478,-87.599861,"Hyde Park / UChicago","Tier 3 University Campus",0.31
+303,"Halsted St & 18th St",41.857506,-87.646277,"Pilsen Arts District","Tier 3 Neighborhood Hub",0.44
+304,"Damen Ave & Cortland St",41.916045,-87.677412,"Bucktown / 606 Trail","Tier 2 Neighborhood Trail",0.48

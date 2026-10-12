@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyclistic Bike-Share Analytics — Enterprise Power BI Solution</title>
+  <meta name="description" content="Production-grade executive Power BI analytics platform for Cyclistic Bike-Share Chicago network.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js & Leaflet JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="light-mode">
+  <div class="app-layout">
+    
+    <!-- ================= MODERN POWER BI LEFT SIDEBAR ================= -->
+    <aside class="pbi-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <div class="brand-glyph">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="5.5" cy="17.5" r="3.5"/>
+            <circle cx="18.5" cy="17.5" r="3.5"/>
+            <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 2zm-3 11.5L9 6H6m6 0l3 5.5 3.5-3"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">CYCLISTIC</span>
+          <span class="brand-badge">PRO BI v2.4</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">ANALYTICS REPORT PAGES</div>
+      <nav class="sidebar-nav" id="sidebarNav" aria-label="Report Navigation">
+        <button class="nav-item active" data-page="page1" id="nav-page1">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>
+            </svg>
+          </span>
+          <span class="nav-label">Executive Cockpit</span>
+          <span class="nav-badge">Core</span>
+        </button>
+
+        <button class="nav-item" data-page="page2" id="nav-page2">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </span>
+          <span class="nav-label">Rider Personas</span>
+          <span class="nav-badge orange">Segment</span>
+        </button>
+
+        <button class="nav-item" data-page="page3" id="nav-page3">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </span>
+          <span class="nav-label">Temporal & Trends</span>
+          <span class="nav-badge">24x7</span>
+        </button>
+
+        <button class="nav-item" data-page="page4" id="nav-page4">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
+            </svg>
+          </span>
+          <span class="nav-label">Geospatial Network</span>
+          <span class="nav-badge teal">Map</span>
+        </button>
+
+        <button class="nav-item" data-page="page5" id="nav-page5">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </span>
+          <span class="nav-label">What-If Simulator</span>
+          <span class="nav-badge gold">ROI</span>
+        </button>
+
+        <button class="nav-item" data-page="page6" id="nav-page6">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <span class="nav-label">Executive Briefing</span>
+          <span class="nav-badge purple">Board</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="model-info-card">
+          <div class="info-header">
+            <span class="status-dot-green"></span>
+            <strong>Star Schema VertiPaq</strong>
+          </div>
+          <div class="info-body">
+            <span>61,973 Fact Rows</span>
+            <span>6 Dimensions Linked</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT WRAPPER ================= -->
+    <div class="app-main">
+      
+      <!-- TOP EXECUTIVE CONTROL BAR -->
+      <header class="pbi-header">
+        <div class="header-left">
+          <button class="btn-icon" id="toggleSidebarBtn" title="Toggle Navigation">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div>
+            <div class="page-title-row">
+              <h1 class="page-title" id="pageHeaderTitle">Executive Ridership Cockpit</h1>
+              <span class="badge-tag live">LIVE MODEL</span>
+            </div>
+            <p class="page-desc" id="pageHeaderDesc">High-level KPI performance, member-versus-casual distribution, and ridership trajectory.</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="quick-stat-badge">
+            <span class="stat-title">ANNUAL RUN RATE:</span>
+            <span class="stat-val" id="headerRunRate">$4.07M ARR</span>
+          </div>
+
+          <button class="btn-theme-toggle" id="themeToggleBtn" title="Switch Dark / Light Theme">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- GLOBAL SLICER RIBBON & BREADCRUMBS -->
+      <section class="pbi-ribbon">
+        <div class="slicers-container">
+          <div class="slicer-box">
+            <span class="slicer-label">RIDER TYPE</span>
+            <select id="filterUserType" class="slicer-control">
+              <option value="all">All Riders (Combined)</option>
+              <option value="member">Annual Members Only</option>
+              <option value="casual">Casual Riders Only</option>
+            </select>
+          </div>
+
+          <div class="slicer-box">
+            <span class="slicer-label">DAY CATEGORY</span>
+            <select id="filterDayType" class="slicer-control">
+              <option value="all">All Days (Mon - Sun)</option>
+              <option value="weekday">Weekdays (Mon - Fri)</option>
+              <option value="weekend">Weekends (Sat - Sun)</option>
+            </select>
+          </div>
+
+          <div class="slicer-box">
+            <span class="slicer-label">FLEET VEHICLE</span>
+            <select id="filterBikeType" class="slicer-control">
+              <option value="all">All Bike Types</option>
+              <option value="classic">Classic Bike</option>
+              <option value="electric">Electric Bike</option>
+              <option value="docked">Docked Bike</option>
+            </select>
+          </div>
+
+          <div class="slicer-box">
+            <span class="slicer-label">TIME HORIZON</span>
+            <select id="filterSeason" class="slicer-control">
+              <option value="all">Full Year 2025</option>
+              <option value="q1">Q1 (Winter: Jan-Mar)</option>
+              <option value="q2">Q2 (Spring: Apr-Jun)</option>
+              <option value="q3">Q3 (Summer: Jul-Sep)</option>
+              <option value="q4">Q4 (Fall: Oct-Dec)</option>
+            </select>
+          </div>
+
+          <button id="resetFiltersBtn" class="btn-clear-filters" title="Reset all slicers">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+            Clear Filters
+          </button>
+        </div>
+
+        <!-- Active Filter Breadcrumbs -->
+        <div class="active-chips-row" id="activeFilterChips">
+          <span class="chips-label">ACTIVE SLICES:</span>
+          <span class="filter-chip" id="chipUser">Rider: All</span>
+          <span class="filter-chip" id="chipDay">Day: All</span>
+          <span class="filter-chip" id="chipBike">Fleet: All</span>
+          <span class="filter-chip" id="chipSeason">Period: 2025</span>
+        </div>
+      </section>
+
+      <!-- ================= REPORT CANVAS CONTAINER ================= -->
+      <main class="canvas-viewport" id="canvasViewport">
+
+        <!-- ================= PAGE 1: EXECUTIVE COCKPIT ================= -->
+        <section class="report-page active" id="page1">
+          
+          <!-- Modern Power BI "New Card" KPI Grid with Sparklines -->
+          <div class="kpi-banner-grid">
+            
+            <!-- KPI 1 -->
+            <div class="new-card-visual accent-blue">
+              <div class="card-top">
+                <span class="card-caption">TOTAL RIDERSHIP</span>
+                <span class="variance-badge positive">▲ +14.8% YoY</span>
+              </div>
+              <div class="card-center">
+                <span class="card-big-val" id="valTotalRides">61,973</span>
+                <!-- In-card SVG sparkline -->
+                <div class="card-sparkline">
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" class="spark-svg">
+                    <path d="M0,22 Q15,25 30,18 T60,6 T85,4 T100,2" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linecap="round"/>
+                    <path d="M0,22 Q15,25 30,18 T60,6 T85,4 T100,2 L100,28 L0,28 Z" fill="rgba(37,99,235,0.08)"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="card-bottom-labels">
+                <span class="label-ref">Target: 60,000</span>
+                <span class="label-ref">Variance: +1,973 rides</span>
+              </div>
+            </div>
+
+            <!-- KPI 2 -->
+            <div class="new-card-visual accent-blue">
+              <div class="card-top">
+                <span class="card-caption">ANNUAL MEMBERS</span>
+                <span class="variance-badge blue">55.2% Share</span>
+              </div>
+              <div class="card-center">
+                <span class="card-big-val text-blue" id="valMemberShare">34,210</span>
+                <div class="card-sparkline">
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" class="spark-svg">
+                    <path d="M0,18 Q20,19 40,14 T70,8 T90,7 T100,9" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round"/>
+                    <path d="M0,18 Q20,19 40,14 T70,8 T90,7 T100,9 L100,28 L0,28 Z" fill="rgba(29,78,216,0.08)"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="card-bottom-labels">
+                <span class="label-ref">Core Foundation</span>
+                <span class="label-ref">12.8m Avg Duration</span>
+              </div>
+            </div>
+
+            <!-- KPI 3 -->
+            <div class="new-card-visual accent-orange">
+              <div class="card-top">
+                <span class="card-caption">CASUAL RIDERS</span>
+                <span class="variance-badge orange">44.8% Share</span>
+              </div>
+              <div class="card-center">
+                <span class="card-big-val text-orange" id="valCasualShare">27,763</span>
+                <div class="card-sparkline">
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" class="spark-svg">
+                    <path d="M0,26 Q20,24 40,16 T70,3 T85,4 T100,12" fill="none" stroke="#EA580C" stroke-width="2.4" stroke-linecap="round"/>
+                    <path d="M0,26 Q20,24 40,16 T70,3 T85,4 T100,12 L100,28 L0,28 Z" fill="rgba(234,88,12,0.08)"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="card-bottom-labels">
+                <span class="label-ref">Conversion Target</span>
+                <span class="label-ref">28.5m Avg Duration</span>
+              </div>
+            </div>
+
+            <!-- KPI 4 -->
+            <div class="new-card-visual accent-teal">
+              <div class="card-top">
+                <span class="card-caption">AVG RIDE DURATION</span>
+                <span class="variance-badge neutral">19.8 min</span>
+              </div>
+              <div class="card-center">
+                <span class="card-big-val" id="valAvgDuration">19.8m</span>
+                <div class="card-dual-pill">
+                  <span class="mini-pill blue">Mem: 12.8m</span>
+                  <span class="mini-pill orange">Cas: 28.5m</span>
+                </div>
+              </div>
+              <div class="card-bottom-labels">
+                <span class="label-ref">Duration Delta</span>
+                <span class="label-ref">Casual is 2.2x Longer</span>
+              </div>
+            </div>
+
+            <!-- KPI 5 -->
+            <div class="new-card-visual accent-gold">
+              <div class="card-top">
+                <span class="card-caption">PRIME CONVERSION POOL</span>
+                <span class="variance-badge gold">Target Pipeline</span>
+              </div>
+              <div class="card-center">
+                <span class="card-big-val text-gold" id="valPrimeConversion">11,480</span>
+                <div class="card-sparkline">
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" class="spark-svg">
+                    <path d="M0,20 Q25,22 50,14 T80,8 T100,6" fill="none" stroke="#D97706" stroke-width="2.4" stroke-linecap="round"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="card-bottom-labels">
+                <span class="label-ref">Commuter Casuals</span>
+                <span class="label-ref highlight-text">$1.36M ARR Pool</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Main Visuals Container -->
+          <div class="grid-layout-12">
+            
+            <!-- Daily Trend & 7-Day Moving Average Line Chart -->
+            <div class="grid-span-8 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Daily Ridership Trajectory & 7-Day Moving Average</h3>
+                  <p class="visual-subheading">Observed ride counts across the network with 7-day smoothed trendline and forecast boundary</p>
+                </div>
+                <div class="visual-tools">
+                  <span class="legend-indicator blue">Observed</span>
+                  <span class="legend-indicator red">7-Day MA</span>
+                  <span class="legend-indicator grey">Target (170/d)</span>
+                </div>
+              </div>
+              <div class="chart-canvas-box h-320">
+                <canvas id="chartTrendDaily"></canvas>
+              </div>
+            </div>
+
+            <!-- Rider Split Donut Chart with Center Summary -->
+            <div class="grid-span-4 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Rider Membership Composition</h3>
+                  <p class="visual-subheading">Annual subscribers vs. on-demand casual passes</p>
+                </div>
+              </div>
+              <div class="chart-canvas-box h-320 donut-center-wrap">
+                <canvas id="chartUserSplit"></canvas>
+                <div class="donut-center-metric">
+                  <span class="metric-number">61,973</span>
+                  <span class="metric-text">Total Trips</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top 10 High-Traffic Departure Stations -->
+            <div class="grid-span-7 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Top 10 High-Traffic Departure Stations</h3>
+                  <p class="visual-subheading">Ranked by ride volume and segmented by Member vs. Casual rider ratio</p>
+                </div>
+                <div class="badge-pill">Pareto Top 10 = 54% Volume</div>
+              </div>
+              <div class="chart-canvas-box h-300">
+                <canvas id="chartTopStations"></canvas>
+              </div>
+            </div>
+
+            <!-- Bike Fleet Mix by Rider Type -->
+            <div class="grid-span-5 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Vehicle Fleet Share by Rider Type</h3>
+                  <p class="visual-subheading">Classic bike, Electric bike, and Docked bike adoption</p>
+                </div>
+              </div>
+              <div class="chart-canvas-box h-300">
+                <canvas id="chartBikeFleet"></canvas>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= PAGE 2: PERSONAS & SEGMENTATION ================= -->
+        <section class="report-page" id="page2">
+          
+          <div class="executive-callout-card">
+            <div class="callout-badge-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+            </div>
+            <div class="callout-content">
+              <h4>Senior Analyst Behavioral Finding: The Commuter vs. Cruiser Disconnect</h4>
+              <p><strong>Annual Members</strong> are utility-driven routine commuters with twin demand surges at <strong>8:00 AM</strong> and <strong>5:00 PM</strong>, logging fast, efficient trips (12.8 min avg). In contrast, <strong>Casual Riders</strong> exhibit recreation patterns: smooth afternoon bell curve (1:00 PM - 5:00 PM), <strong>2.2× longer trips (28.5 min avg)</strong>, and a massive <strong>+185% weekend volume surge</strong>.</p>
+            </div>
+          </div>
+
+          <div class="grid-layout-12">
+            
+            <!-- 24-Hour Profile -->
+            <div class="grid-span-7 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">24-Hour Departure Profile: Member vs. Casual</h3>
+                  <p class="visual-subheading">Clear visualization of commuter twin peaks vs. leisure afternoon curve</p>
+                </div>
+                <div class="visual-tools">
+                  <span class="legend-indicator blue">Member (Twin Peak)</span>
+                  <span class="legend-indicator orange">Casual (Afternoon)</span>
+                </div>
+              </div>
+              <div class="chart-canvas-box h-310">
+                <canvas id="chartHourlyProfile"></canvas>
+              </div>
+            </div>
+
+            <!-- Duration Buckets -->
+            <div class="grid-span-5 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Trip Duration Distribution Categories</h3>
+                  <p class="visual-subheading">Short (&lt;15m), Medium (15-60m), and Long (&gt;60m) trips</p>
+                </div>
+              </div>
+              <div class="chart-canvas-box h-310">
+                <canvas id="chartTripDurationBuckets"></canvas>
+              </div>
+            </div>
+
+            <!-- Day of Week Pattern -->
+            <div class="grid-span-6 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Day-of-the-Week Ridership Pattern (Mon - Sun)</h3>
+                  <p class="visual-subheading">Member weekday dominance vs. Casual weekend surge (+185%)</p>
+                </div>
+              </div>
+              <div class="chart-canvas-box h-300">
+                <canvas id="chartDayOfWeek"></canvas>
+              </div>
+            </div>
+
+            <!-- Machine Learning Behavioral Clusters -->
+            <div class="grid-span-6 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">K-Means Behavioral Clusters (k=4 Optimal)</h3>
+                  <p class="visual-subheading">Algorithmic segmentation of trip behavior (from Python pipeline)</p>
+                </div>
+                <span class="badge-pill blue">Unsupervised ML</span>
+              </div>
+              <div class="table-container">
+                <table class="pbi-data-table">
+                  <thead>
+                    <tr>
+                      <th>Cluster</th>
+                      <th>Behavioral Persona</th>
+                      <th>Avg Duration</th>
+                      <th>Avg Speed</th>
+                      <th>Dominant Rider</th>
+                      <th>Strategy</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="cluster-tag c1">C1</span></td>
+                      <td><strong>Rapid Commuter</strong></td>
+                      <td>11.2 min</td>
+                      <td>16.2 km/h</td>
+                      <td>86% Member</td>
+                      <td><span class="status-tag success">Retain / Upsell</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="cluster-tag c2">C2</span></td>
+                      <td><strong>Lakefront Cruiser</strong></td>
+                      <td>34.8 min</td>
+                      <td>11.4 km/h</td>
+                      <td>79% Casual</td>
+                      <td><span class="status-tag warning">Weekend Pass</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="cluster-tag c3">C3</span></td>
+                      <td><strong>Cross-City Commuter</strong></td>
+                      <td>22.4 min</td>
+                      <td>18.5 km/h</td>
+                      <td>64% Member</td>
+                      <td><span class="status-tag target">★ Prime Target</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="cluster-tag c4">C4</span></td>
+                      <td><strong>Last-Mile Connector</strong></td>
+                      <td>7.8 min</td>
+                      <td>14.1 km/h</td>
+                      <td>71% Member</td>
+                      <td><span class="status-tag target">★ Prime Target</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= PAGE 3: TEMPORAL & TRENDS ================= -->
+        <section class="report-page" id="page3">
+          <div class="grid-layout-12">
+            
+            <!-- Monthly Seasonality Area Chart -->
+            <div class="grid-span-8 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Monthly Ridership Seasonality & Temperature Cycle</h3>
+                  <p class="visual-subheading">Chicago summer surge (Jun - Aug) vs. winter contraction (Jan - Feb)</p>
+                </div>
+                <div class="badge-pill orange">Summer Peak: +285% vs Winter</div>
+              </div>
+              <div class="chart-canvas-box h-300">
+                <canvas id="chartMonthlySeasonality"></canvas>
+              </div>
+            </div>
+
+            <!-- Key Temporal Metrics Stack -->
+            <div class="grid-span-4 pbi-visual-card stat-cards-column">
+              <div class="stat-highlight-tile">
+                <div class="stat-tile-title">PEAK VOLUME MONTH (JULY)</div>
+                <div class="stat-tile-value">9,842 rides</div>
+                <div class="stat-tile-sub">Accounts for 15.9% of annual ridership</div>
+              </div>
+              <div class="stat-highlight-tile">
+                <div class="stat-tile-title">WEEKEND SURGE MULTIPLIER</div>
+                <div class="stat-tile-value text-orange">2.42× Casual Surge</div>
+                <div class="stat-tile-sub">Saturday volume is 142% higher than Wednesday</div>
+              </div>
+              <div class="stat-highlight-tile">
+                <div class="stat-tile-title">RUSH HOUR TRANSIT VELOCITY</div>
+                <div class="stat-tile-value text-blue">15.8 km/h</div>
+                <div class="stat-tile-sub">Members travel 24% faster than weekend casuals</div>
+              </div>
+            </div>
+
+            <!-- 24x7 Heatmap Matrix Visual -->
+            <div class="grid-span-12 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">24×7 Network Density Heatmap: Day of Week × Hour of Day</h3>
+                  <p class="visual-subheading">Interactive conditional gradient formatting replicating Power BI Matrix Visual with conditional colors</p>
+                </div>
+                <div class="heatmap-legend">
+                  <span>0 Rides</span>
+                  <div class="legend-gradient-bar"></div>
+                  <span>Peak Density (&gt;450/hr)</span>
+                </div>
+              </div>
+              <div class="heatmap-scroll-box" id="heatmapMatrixContainer">
+                <!-- Heatmap dynamically rendered via JS -->
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= PAGE 4: GEOSPATIAL & NETWORK ================= -->
+        <section class="report-page" id="page4">
+          <div class="grid-layout-12">
+            
+            <!-- Real Interactive Chicago Leaflet Map -->
+            <div class="grid-span-8 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Chicago Station Network & Demand Clusters</h3>
+                  <p class="visual-subheading">Interactive Leaflet map showing authentic Chicago station coordinates and Member/Casual concentration</p>
+                </div>
+                <div class="map-controls-row">
+                  <span class="legend-indicator blue">Commuter Hub (Member &gt;75%)</span>
+                  <span class="legend-indicator orange">Tourist / Leisure (Casual &gt;70%)</span>
+                </div>
+              </div>
+              <div class="leaflet-map-wrapper">
+                <div id="leafletMap" class="leaflet-container"></div>
+                <div class="map-floating-panel">
+                  <div class="panel-header">SELECTED STATION INTEL</div>
+                  <div class="panel-station-name" id="selectedStationName">Streeter Dr & Grand Ave</div>
+                  <div class="panel-metrics-grid">
+                    <div>
+                      <span class="p-label">VOLUME</span>
+                      <span class="p-val" id="selectedStationVolume">4,740 rides</span>
+                    </div>
+                    <div>
+                      <span class="p-label">CASUAL SHARE</span>
+                      <span class="p-val text-orange" id="selectedStationCasual">82.0%</span>
+                    </div>
+                    <div>
+                      <span class="p-label">NET BALANCE</span>
+                      <span class="p-val text-green" id="selectedStationNet">+420 Surplus</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Net Station Rebalancing Flow -->
+            <div class="grid-span-4 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Station Net Flow (Rebalancing)</h3>
+                  <p class="visual-subheading">Surplus (+) stations vs. Deficit (-) stations</p>
+                </div>
+              </div>
+              <div class="chart-canvas-box h-380">
+                <canvas id="chartNetStationFlow"></canvas>
+              </div>
+            </div>
+
+            <!-- Top 8 Origin Destination Routes -->
+            <div class="grid-span-12 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Top 8 Origin-Destination Corridors & Route Centrality</h3>
+                  <p class="visual-subheading">Highest volume bike transit pairs across the Chicago network</p>
+                </div>
+                <span class="badge-pill blue">Network Graph</span>
+              </div>
+              <div class="table-container">
+                <table class="pbi-data-table" id="odRoutesTable">
+                  <thead>
+                    <tr>
+                      <th>Route ID</th>
+                      <th>Departure Station</th>
+                      <th>Arrival Station</th>
+                      <th>Total Trips</th>
+                      <th>Dominant Persona</th>
+                      <th>Avg Duration</th>
+                      <th>Distance</th>
+                      <th>Round Trip?</th>
+                    </tr>
+                  </thead>
+                  <tbody id="odRoutesTableBody">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= PAGE 5: WHAT-IF SIMULATOR ================= -->
+        <section class="report-page" id="page5">
+          
+          <div class="executive-callout-card gold">
+            <div class="callout-badge-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div class="callout-content">
+              <h4>Senior BI Architect Scenario Engine: Casual-to-Member Conversion Economics</h4>
+              <p>Simulate financial outcomes based on converting the <strong>11,480 Prime Commuter Casuals</strong> into recurring annual subscribers. Adjust target conversion percentage and annual subscription fees to observe ARR growth, casual pass cannibalization, and net portfolio lift.</p>
+            </div>
+          </div>
+
+          <!-- Dynamic What-If Control Sliders -->
+          <div class="whatif-ribbon-card">
+            
+            <div class="whatif-slider-cell">
+              <div class="slider-title-row">
+                <label for="sliderConversionRate">Target Conversion Rate of Prime Pool:</label>
+                <span class="slider-display-badge" id="valSliderRate">7.0%</span>
+              </div>
+              <input type="range" id="sliderConversionRate" min="1" max="20" step="0.5" value="7.0">
+              <div class="slider-ticks">
+                <span>1% (Conservative)</span>
+                <span>7% (Target)</span>
+                <span>20% (Aggressive)</span>
+              </div>
+            </div>
+
+            <div class="whatif-slider-cell">
+              <div class="slider-title-row">
+                <label for="sliderAnnualFee">Annual Membership Subscription Price:</label>
+                <span class="slider-display-badge" id="valSliderFee">$119 / yr</span>
+              </div>
+              <input type="range" id="sliderAnnualFee" min="89" max="159" step="5" value="119">
+              <div class="slider-ticks">
+                <span>$89 (Promo)</span>
+                <span>$119 (Standard)</span>
+                <span>$159 (Premium)</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- What-If Output Cards -->
+          <div class="kpi-banner-grid four-col">
+            <div class="new-card-visual accent-blue">
+              <div class="card-top">
+                <span class="card-caption">CONVERTED MEMBERS</span>
+                <span class="variance-badge blue">New Subscribers</span>
+              </div>
+              <div class="card-center">
+                <span class="card-big-val text-blue" id="valSimConverted">804</span>
+              </div>
+              <div class="card-bottom-labels">
+                <span class="label-ref">From 11,480 Prime Pool</span>
+              </div>
+            </div>
+
+            <div class="new-card-visual accent-gold">
+              <div class="card-top">
+                <span class="card-caption">NEW ANNUAL REVENUE (ARR)</span>
+                <span class="variance-badge gold">Subscription Inflow</span>
+              </div>
+              <div class="card-center">
+                <span class="card-big-val text-gold" id="valSimRevenue">$95,676</span>
+              </div>
+              <div class="card-bottom-labels">
+                <span class="label-ref">Contractual Recurring</span>
+              </div>
+            </div>
+
+            <div class="new-card-visual accent-orange">
+              <div class="card-top">
+                <span class="card-caption">CASUAL CANNIBALIZATION</span>
+                <span class="variance-badge orange">Single-Pass Offset</span>
+              </div>
+              <div class="card-center">
+                <span class="card-big-val text-orange" id="valSimCannibal">-$52,260</span>
+              </div>
+              <div class="card-bottom-labels">
+                <span class="label-ref">Assumes $65 prior annual spend</span>
+              </div>
+            </div>
+
+            <div class="new-card-visual accent-teal">
+              <div class="card-top">
+                <span class="card-caption">NET REVENUE UPLIFT</span>
+                <span class="variance-badge positive">▲ Net Gain</span>
+              </div>
+              <div class="card-center">
+                <span class="card-big-val text-green" id="valSimNetUplift">+$43,416</span>
+              </div>
+              <div class="card-bottom-labels">
+                <span class="label-ref">3-Yr LTV Lift: <strong>+$108K</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2D Sensitivity Matrix & Funnel Grid -->
+          <div class="grid-layout-12">
+            
+            <!-- Sensitivity Matrix Table -->
+            <div class="grid-span-7 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Pricing & Conversion 2D Sensitivity Matrix (Net ARR Uplift)</h3>
+                  <p class="visual-subheading">Evaluates Net Revenue ($) across combinations of Conversion Rate and Annual Fee</p>
+                </div>
+              </div>
+              <div class="table-container">
+                <table class="pbi-data-table matrix-table" id="sensitivityMatrixTable">
+                  <thead>
+                    <tr>
+                      <th>Conversion %</th>
+                      <th>$89 / yr</th>
+                      <th>$109 / yr</th>
+                      <th>$119 / yr</th>
+                      <th>$139 / yr</th>
+                      <th>$159 / yr</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sensitivityMatrixBody">
+                    <!-- Rendered via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Conversion Funnel Progression -->
+            <div class="grid-span-5 pbi-visual-card">
+              <div class="visual-card-header">
+                <div>
+                  <h3 class="visual-heading">Rider Conversion Funnel Stages</h3>
+                  <p class="visual-subheading">Progression pipeline from casual single-pass to annual member</p>
+                </div>
+              </div>
+              <div class="funnel-progression-box">
+                <div class="funnel-tier tier-1">
+                  <div class="tier-info">
+                    <span class="tier-name">1. Total Casual Rider Base</span>
+                    <span class="tier-metric">27,763 (100%)</span>
+                  </div>
+                </div>
+                <div class="funnel-tier tier-2">
+                  <div class="tier-info">
+                    <span class="tier-name">2. Repeat Casuals (≥3 rides/yr)</span>
+                    <span class="tier-metric">16,240 (58.5%)</span>
+                  </div>
+                </div>
+                <div class="funnel-tier tier-3">
+                  <div class="tier-info">
+                    <span class="tier-name">3. Weekday Commuter Pattern</span>
+                    <span class="tier-metric">11,480 (41.4%)</span>
+                  </div>
+                </div>
+                <div class="funnel-tier tier-4">
+                  <div class="tier-info">
+                    <span class="tier-name">4. Target Converted Annual Members</span>
+                    <span class="tier-metric highlight" id="funnelConvertedNum">804 (Target)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= PAGE 6: EXECUTIVE BRIEFING (BOARD SLIDE) ================= -->
+        <section class="report-page" id="page6">
+          <div class="briefing-container">
+            <div class="briefing-header">
+              <span class="briefing-kicker">EXECUTIVE STRATEGY BRIEFING</span>
+              <h2>Cyclistic Bike-Share: Annual Growth & Membership Strategy</h2>
+              <p>Key findings, strategic recommendations, and financial opportunity model for executive leadership.</p>
+            </div>
+
+            <div class="briefing-pillars-grid">
+              
+              <div class="briefing-pillar-card">
+                <div class="pillar-num">01</div>
+                <h3>The Dual Persona Reality</h3>
+                <p>Cyclistic serves two distinctly polarized customer segments: <strong>Annual Members</strong> treat the fleet as urban rapid transit (12.8 min trips, 8 AM & 5 PM rush-hour peaks, high weekday consistency). <strong>Casual Riders</strong> treat the fleet as recreational leisure (28.5 min trips, weekend afternoon surges).</p>
+                <div class="pillar-stat">
+                  <span class="stat-big">55.2%</span>
+                  <span class="stat-desc">of rides are generated by existing subscribers</span>
+                </div>
+              </div>
+
+              <div class="briefing-pillar-card">
+                <div class="pillar-num">02</div>
+                <h3>The Commuter Casual Opportunity</h3>
+                <p>Analysis identifies <strong>11,480 casual rides</strong> that occur strictly on Monday through Friday during peak morning (7-9 AM) and evening (4-7 PM) commute hours. These riders have identical travel behaviors to Annual Members but pay on a high-friction per-ride basis.</p>
+                <div class="pillar-stat">
+                  <span class="stat-big text-gold">$1.36M</span>
+                  <span class="stat-desc">Total addressable recurring revenue in this pool</span>
+                </div>
+              </div>
+
+              <div class="briefing-pillar-card">
+                <div class="pillar-num">03</div>
+                <h3>Geographic Station Clustering</h3>
+                <p>Top casual volume is concentrated along Lakefront leisure stations (<strong>Streeter Dr / Navy Pier</strong>, <strong>Millennium Park</strong>, <strong>Oak St Beach</strong>) where casual riders account for over <strong>75%</strong> of volume. Commuter demand is concentrated around West Loop rail terminals (<strong>Clinton & Washington</strong>, <strong>Clinton & Madison</strong>).</p>
+                <div class="pillar-stat">
+                  <span class="stat-big text-teal">54%</span>
+                  <span class="stat-desc">of total network volume flows through top 10 stations</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Strategic Action Matrix -->
+            <div class="briefing-actions-section">
+              <h3 class="section-title">Strategic Roadmap for Commercial Execution</h3>
+              <div class="action-cards-grid">
+                
+                <div class="action-card">
+                  <span class="action-phase">INITIATIVE 1 • DIGITAL MARKETING</span>
+                  <h4>Automated Commute Conversion Push</h4>
+                  <p>Trigger automated mobile in-app prompts after a casual user completes 3 weekday rush-hour trips: <em>"You commuted 3x this week! Save $45/month with an Annual Membership."</em></p>
+                </div>
+
+                <div class="action-card">
+                  <span class="action-phase">INITIATIVE 2 • PHYSICAL ACTIVATION</span>
+                  <h4>Field Ambassador QR Kiosks</h4>
+                  <p>Deploy branded signage and conversion ambassadors at Streeter Dr & Grand Ave (Navy Pier) and Millennium Park during peak Friday afternoon and weekend hours offering 1st-month trial discounts.</p>
+                </div>
+
+                <div class="action-card">
+                  <span class="action-phase">INITIATIVE 3 • FLEET LOGISTICS</span>
+                  <h4>Predictive Net-Flow Rebalancing</h4>
+                  <p>Use the Station Net Flow metrics to dispatch morning rebalancing vans directly from surplus lakefront docks to deficit rail terminals (Ogilvie & Union Station) before 7:30 AM.</p>
+                </div>
+
+                <div class="action-card">
+                  <span class="action-phase">INITIATIVE 4 • PRODUCT PACKAGING</span>
+                  <h4>Spring Season Launch Pass</h4>
+                  <p>Launch targeted email and digital campaigns in mid-April right before the May–July summer ridership explosion, locking in annual commitments before tourist season.</p>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+
+      <!-- BOTTOM ENTERPRISE STATUS BAR -->
+      <footer class="pbi-statusbar">
+        <div class="status-left">
+          <span class="status-indicator-dot"></span>
+          <span>VertiPaq In-Memory Engine • 61,973 Records Indexed • 0.12s Query Latency</span>
+        </div>
+        <div class="status-right">
+          <a href="../DAX_Measures.dax" target="_blank" class="status-link">DAX Measures (35+)</a>
+          <span class="sep">/</span>
+          <a href="../PowerQuery_ETL_Queries.m" target="_blank" class="status-link">Power Query (M)</a>
+          <span class="sep">/</span>
+          <a href="../cyclistic_theme.json" target="_blank" class="status-link">Theme JSON</a>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

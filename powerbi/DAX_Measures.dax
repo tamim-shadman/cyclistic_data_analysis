@@ -1,0 +1,337 @@
+// ==============================================================================
+// CYCLISTIC BIKE-SHARE ANALYTICS — ENTERPRISE DAX MEASURES SUITE
+// Architecture: Star Schema Model (_Measures Table)
+// Design Standard: Senior Lead BI Architect & IBCS Standards
+// ==============================================================================
+
+// ------------------------------------------------------------------------------
+// FOLDER: 01_Volume_KPIs
+// ------------------------------------------------------------------------------
+
+[Total Rides] = 
+COUNTROWS(Fact_Rides)
+
+[Member Rides] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_UserType[User_Type_Name] = "Member")
+)
+
+[Casual Rides] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_UserType[User_Type_Name] = "Casual")
+)
+
+[Member Ride Share %] = 
+DIVIDE([Member Rides], [Total Rides], 0)
+
+[Casual Ride Share %] = 
+DIVIDE([Casual Rides], [Total Rides], 0)
+
+[Classic Bike Rides] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_BikeType[Bike_Type_Name] = "Classic Bike")
+)
+
+[Electric Bike Rides] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_BikeType[Bike_Type_Name] = "Electric Bike")
+)
+
+[Docked Bike Rides] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_BikeType[Bike_Type_Name] = "Docked Bike")
+)
+
+[Round Trips] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Fact_Rides[Is_Round_Trip] = 1)
+)
+
+[Round Trip %] = 
+DIVIDE([Round Trips], [Total Rides], 0)
+
+// ------------------------------------------------------------------------------
+// FOLDER: 02_Duration_&_Distance
+// ------------------------------------------------------------------------------
+
+[Total Duration Minutes] = 
+SUM(Fact_Rides[Ride_Duration_Minutes])
+
+[Total Duration Hours] = 
+DIVIDE([Total Duration Minutes], 60, 0)
+
+[Avg Ride Duration (Min)] = 
+AVERAGE(Fact_Rides[Ride_Duration_Minutes])
+
+[Median Ride Duration (Min)] = 
+MEDIAN(Fact_Rides[Ride_Duration_Minutes])
+
+[Member Avg Duration (Min)] = 
+CALCULATE(
+    [Avg Ride Duration (Min)],
+    KEEPFILTERS(Dim_UserType[User_Type_Name] = "Member")
+)
+
+[Casual Avg Duration (Min)] = 
+CALCULATE(
+    [Avg Ride Duration (Min)],
+    KEEPFILTERS(Dim_UserType[User_Type_Name] = "Casual")
+)
+
+[Duration Ratio Casual to Member] = 
+DIVIDE([Casual Avg Duration (Min)], [Member Avg Duration (Min)], 0)
+
+[Total Distance (KM)] = 
+SUM(Fact_Rides[Distance_KM])
+
+[Avg Trip Distance (KM)] = 
+AVERAGE(Fact_Rides[Distance_KM])
+
+[Avg Speed (KM/H)] = 
+DIVIDE(
+    [Total Distance (KM)],
+    [Total Duration Hours],
+    0
+)
+
+// ------------------------------------------------------------------------------
+// FOLDER: 03_Time_Intelligence_&_IBCS_Variances
+// ------------------------------------------------------------------------------
+
+[Rides MTD] = 
+TOTALMTD([Total Rides], Dim_Date[Date])
+
+[Rides QTD] = 
+TOTALQTD([Total Rides], Dim_Date[Date])
+
+[Rides YTD] = 
+TOTALYTD([Total Rides], Dim_Date[Date])
+
+[Prior Month Rides] = 
+CALCULATE(
+    [Total Rides],
+    DATEADD(Dim_Date[Date], -1, MONTH)
+)
+
+[MoM Ride Growth Absolute] = 
+VAR _Prior = [Prior Month Rides]
+RETURN
+IF(NOT ISBLANK(_Prior), [Total Rides] - _Prior, BLANK())
+
+[MoM Ride Growth %] = 
+VAR _Prior = [Prior Month Rides]
+RETURN
+DIVIDE([MoM Ride Growth Absolute], _Prior, 0)
+
+[Same Period Last Year Rides] = 
+CALCULATE(
+    [Total Rides],
+    SAMEPERIODLASTYEAR(Dim_Date[Date])
+)
+
+[YoY Ride Growth %] = 
+VAR _SPLY = [Same Period Last Year Rides]
+RETURN
+DIVIDE([Total Rides] - _SPLY, _SPLY, 0)
+
+// IBCS Budget Target Benchmark
+[Rides Annual Target] = 
+// Set 60,000 baseline budget target across the network
+CALCULATE(
+    [Total Rides],
+    ALL(Fact_Rides)
+) * 0.96
+
+[Variance vs Target Absolute] = 
+[Total Rides] - [Rides Annual Target]
+
+[Variance vs Target %] = 
+DIVIDE([Variance vs Target Absolute], [Rides Annual Target], 0)
+
+[7-Day Moving Avg Rides] = 
+VAR _LastDate = MAX(Dim_Date[Date])
+RETURN
+CALCULATE(
+    DIVIDE([Total Rides], 7, 0),
+    DATESINPERIOD(Dim_Date[Date], _LastDate, -7, DAY)
+)
+
+[30-Day Moving Avg Rides] = 
+VAR _LastDate = MAX(Dim_Date[Date])
+RETURN
+CALCULATE(
+    DIVIDE([Total Rides], 30, 0),
+    DATESINPERIOD(Dim_Date[Date], _LastDate, -30, DAY)
+)
+
+[Weekday Rides] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_Date[Is_Weekend_Flag] = 0)
+)
+
+[Weekend Rides] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_Date[Is_Weekend_Flag] = 1)
+)
+
+[Weekend Surge Ratio] = 
+VAR _DailyWeekdayAvg = DIVIDE([Weekday Rides], 5, 0)
+VAR _DailyWeekendAvg = DIVIDE([Weekend Rides], 2, 0)
+RETURN
+DIVIDE(_DailyWeekendAvg, _DailyWeekdayAvg, 0)
+
+// ------------------------------------------------------------------------------
+// FOLDER: 04_Behavior_Segmentation
+// ------------------------------------------------------------------------------
+
+[Commuter Trips] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_Date[Is_Weekend_Flag] = 0),
+    KEEPFILTERS(Dim_Time[Is_Peak_Rush_Hour] = 1)
+)
+
+[Commuter Trip Share %] = 
+DIVIDE([Commuter Trips], [Total Rides], 0)
+
+[Leisure Trips] = 
+CALCULATE(
+    [Total Rides],
+    FILTER(
+        ALLSELECTED(Dim_Date),
+        Dim_Date[Is_Weekend_Flag] = 1
+    ) +
+    FILTER(
+        ALLSELECTED(Dim_Time),
+        Dim_Time[Is_Peak_Rush_Hour] = 0
+    )
+)
+
+[Casual Commuter Rides] = 
+CALCULATE(
+    [Commuter Trips],
+    KEEPFILTERS(Dim_UserType[User_Type_Name] = "Casual")
+)
+
+[Casual Commuter Share %] = 
+DIVIDE([Casual Commuter Rides], [Casual Rides], 0)
+
+[Short Trips (<15m)] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_RideCategory[Category_Name] = "Short Trip (<15 min)")
+)
+
+[Medium Trips (15-60m)] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_RideCategory[Category_Name] = "Medium Trip (15-60 min)")
+)
+
+[Long Trips (>60m)] = 
+CALCULATE(
+    [Total Rides],
+    KEEPFILTERS(Dim_RideCategory[Category_Name] = "Long / Day Trip (>60 min)")
+)
+
+// ------------------------------------------------------------------------------
+// FOLDER: 05_Conversion_&_Financial_Simulation (What-If Parameters)
+// ------------------------------------------------------------------------------
+
+[Selected Conversion Rate %] = 
+SELECTEDVALUE('WhatIf_ConversionRate'[Conversion Rate %], 0.07) // Default 7%
+
+[Selected Annual Membership Fee] = 
+SELECTEDVALUE('WhatIf_MembershipFee'[Membership Fee ($)], 119) // Default $119/year
+
+[Prime Casual Conversion Pool] = 
+// Casual riders exhibiting commuter habits (weekday peak travel and repeat medium trips)
+CALCULATE(
+    [Casual Rides],
+    KEEPFILTERS(Dim_Date[Is_Weekend_Flag] = 0),
+    KEEPFILTERS(Dim_Time[Is_Peak_Rush_Hour] = 1)
+)
+
+[Simulated Converted Members] = 
+ROUND([Prime Casual Conversion Pool] * [Selected Conversion Rate %], 0)
+
+[Projected New Annual Revenue ($)] = 
+[Simulated Converted Members] * [Selected Annual Membership Fee]
+
+[Est Casual Single Ride Revenue ($)] = 
+// Assumes $3.50 base unlock + $0.18/minute for casual trips
+SUMX(
+    FILTER(Fact_Rides, RELATED(Dim_UserType[User_Type_Name]) = "Casual"),
+    3.50 + (Fact_Rides[Ride_Duration_Minutes] * 0.18)
+)
+
+[Net Conversion Revenue Uplift ($)] = 
+VAR _MembershipGain = [Projected New Annual Revenue ($)]
+VAR _CasualCannibalization = [Simulated Converted Members] * 65 // Estimated casual spend lost
+RETURN
+_MembershipGain - _CasualCannibalization
+
+// Customer Lifetime Value (LTV) Calculation (3-Year Horizon)
+[Member 3-Year Estimated LTV] = 
+VAR _AnnualRetentionRate = 0.82
+VAR _Year1 = [Selected Annual Membership Fee]
+VAR _Year2 = _Year1 * _AnnualRetentionRate
+VAR _Year3 = _Year2 * _AnnualRetentionRate
+RETURN
+_Year1 + _Year2 + _Year3
+
+[Total Portfolio LTV Uplift ($)] = 
+[Simulated Converted Members] * [Member 3-Year Estimated LTV]
+
+// ------------------------------------------------------------------------------
+// FOLDER: 06_Station_&_Spatial_Pareto
+// ------------------------------------------------------------------------------
+
+[Start Station Total Departures] = 
+[Total Rides]
+
+[End Station Total Arrivals] = 
+CALCULATE(
+    [Total Rides],
+    USERELATIONSHIP(Fact_Rides[End_Station_ID], Dim_Station[Station_ID])
+)
+
+[Station Net Inflow / Outflow Balance] = 
+[End Station Total Arrivals] - [Start Station Total Departures]
+
+[Top 10 Start Station Volume Share %] = 
+VAR _Top10Rides = 
+    CALCULATE(
+        [Total Rides],
+        TOPN(10, ALLSELECTED(Dim_Station[Station_Name]), [Total Rides], DESC)
+    )
+RETURN
+DIVIDE(_Top10Rides, CALCULATE([Total Rides], ALLSELECTED(Dim_Station)), 0)
+
+[Unique Route Count] = 
+DISTINCTCOUNTNOBLANK(Fact_Rides[Route_Key])
+
+// Pareto 80/20 Cumulative Station Share
+[Cumulative Station Ride Share %] = 
+VAR _CurrentStationRides = [Total Rides]
+VAR _AllSelectedRides = CALCULATE([Total Rides], ALLSELECTED(Dim_Station))
+VAR _HigherOrEqualStations = 
+    FILTER(
+        ALLSELECTED(Dim_Station),
+        [Total Rides] >= _CurrentStationRides
+    )
+VAR _CumulativeRides = 
+    SUMX(
+        _HigherOrEqualStations,
+        [Total Rides]
+    )
+RETURN
+DIVIDE(_CumulativeRides, _AllSelectedRides, 0)

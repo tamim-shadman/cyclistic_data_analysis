@@ -1,0 +1,4 @@
+bike_type_key,bike_type_name,speed_rating,fleet_role
+1,Classic Bike,Standard (12-15 km/h),Core Commuter Fleet
+2,Electric Bike,Fast (18-22 km/h),High Demand / Longer Trips
+3,Docked Bike,Standard (12-15 km/h),Legacy Station Fleet

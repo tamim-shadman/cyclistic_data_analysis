@@ -21,11 +21,25 @@ This project analyzes how casual riders and annual members differ in their usage
 
 ## Project structure
 
+- `powerbi/` — **Enterprise Power BI Solution** (Star Schema tables, DAX measures, Power Query M code, theme JSON, blueprint, and interactive web preview)
 - `Cyclistic.py` — project entry point for running the CLI analysis pipeline
 - `cyclistic/` — modular package for loading, cleaning, EDA, segmentation, and time-series analysis
 - `requirements.txt` — Python dependencies for the project
 - `eda_outputs/` — generated charts and HTML outputs
 - `assets/` — project screenshots and visual summaries for GitHub documentation
+
+## 📊 Enterprise Power BI Solution
+
+[![Live Power BI Dashboard](https://img.shields.io/badge/Live_Dashboard-GitHub_Pages-2563EB?style=for-the-badge&logo=powerbi&logoColor=white)](https://tamim-shadman.github.io/cyclistic_data_analysis/)
+
+A full enterprise Power BI solution is included under [`powerbi/`](powerbi/) and deployed live via [`docs/`](docs/):
+- **Live Interactive Web App**: [**Launch Live Dashboard**](https://tamim-shadman.github.io/cyclistic_data_analysis/) (Accessible from anywhere without installing Power BI Desktop)
+- **Star Schema Datasets (`powerbi/data/`)**: 1 Fact table (`Fact_Rides.csv`) and 6 Dimensions (`Dim_Date`, `Dim_Time`, `Dim_Station`, `Dim_UserType`, `Dim_BikeType`, `Dim_RideCategory`)
+- **DAX Measures Suite (`powerbi/DAX_Measures.dax`)**: 35+ production DAX calculations grouped into 6 display folders
+- **Power Query M Code (`powerbi/PowerQuery_ETL_Queries.m`)**: Automated data ingestion and calendar generation
+- **Custom Theme JSON (`powerbi/cyclistic_theme.json`)**: Cyclistic executive branding palette
+- **Master Blueprint (`powerbi/POWERBI_SOLUTION_BLUEPRINT.md`)**: Visual-by-visual design specifications for all 6 pages
+
 
 ## Quick start
 
