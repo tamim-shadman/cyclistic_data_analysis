@@ -30,15 +30,14 @@ This project analyzes how casual riders and annual members differ in their usage
 
 ## 📊 Enterprise Power BI Solution
 
-[![Live Power BI Dashboard](https://img.shields.io/badge/Live_Dashboard-GitHub_Pages-2563EB?style=for-the-badge&logo=powerbi&logoColor=white)](https://tamim-shadman.github.io/cyclistic_data_analysis/)
-
-A full enterprise Power BI solution is included under [`powerbi/`](powerbi/) and deployed live via [`docs/`](docs/):
-- **Live Interactive Web App**: [**Launch Live Dashboard**](https://tamim-shadman.github.io/cyclistic_data_analysis/) (Accessible from anywhere without installing Power BI Desktop)
+A full enterprise Power BI solution is included under [`powerbi/`](powerbi/):
 - **Star Schema Datasets (`powerbi/data/`)**: 1 Fact table (`Fact_Rides.csv`) and 6 Dimensions (`Dim_Date`, `Dim_Time`, `Dim_Station`, `Dim_UserType`, `Dim_BikeType`, `Dim_RideCategory`)
 - **DAX Measures Suite (`powerbi/DAX_Measures.dax`)**: 35+ production DAX calculations grouped into 6 display folders
 - **Power Query M Code (`powerbi/PowerQuery_ETL_Queries.m`)**: Automated data ingestion and calendar generation
 - **Custom Theme JSON (`powerbi/cyclistic_theme.json`)**: Cyclistic executive branding palette
+- **Interactive Multi-Page Dashboard**: Standalone local interactive preview under [`powerbi/interactive_preview/`](powerbi/interactive_preview/index.html) covering 6 executive reporting pages
 - **Master Blueprint (`powerbi/POWERBI_SOLUTION_BLUEPRINT.md`)**: Visual-by-visual design specifications for all 6 pages
+- **Deployment Suggestions (`powerbi/DEPLOYMENT_GUIDE.md`)**: Optional guide for hosting on GitHub Pages or Power BI Service
 
 
 ## Quick start
